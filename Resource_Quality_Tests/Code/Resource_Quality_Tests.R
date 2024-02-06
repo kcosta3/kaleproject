@@ -4,8 +4,6 @@
 #
 # Kale Costanza
 # 12/5/2023
-#
-# R code for BIOL 7800 project
 ##############################
 
 
