@@ -2,7 +2,7 @@
 # "Effects of macronutrient manipulation in artificial diet on fall armyworm
 # (Spodoptera frugiperda) performance"
 #
-# Kale Costanza
+# Kale Costanza/Rougeau
 # 12/5/2023
 ##############################
 
@@ -15,7 +15,7 @@
 # read in csv file as data frame
 projectdata <- as.data.frame(read.csv("~/Library/CloudStorage/Dropbox/BIOL7800/final_project/Data/Resource_Quality_Tests.csv"))
 # remove notes/extra columns
-projectdata <- projectdata[,-16:-26] 
+projectdata <- projectdata[,-16:-26]
 
 # convert dates to standard R date format
 library(lubridate)
@@ -31,7 +31,8 @@ projectdata['Moth'] <- mdy(projectdata$Moth)
 projectdata['Dead'] <- mdy(projectdata$Dead)
 
 # fix any mistakes in data
-projectdata[101,15] <- "2023-09-26" # error in month for this entry
+projectdata[101,15] <- "2023-09-26" # error in month for this entry (B1st #11's Dead date)
+### uncorrected error of "6/14/23" instead of "9/14/23" for A3rd #16's Sixth date
 
 # calculate time spent in each instar; add as new columns
 # length in first instar "First_Length" then same until sixth instar
@@ -91,6 +92,8 @@ total_moths # see totals
 
 # calculate age to pupation for all; add as new column
 projectdata$Age_to_Pup = as.integer(difftime(projectdata$Pup, projectdata$First))
+
+### write.csv(projectdata, file = "RQT_corrected_data.csv")
 
 # set sensible breaks for histogram
 breaknum <- length(unique(projectdata$Age_to_Pup, na.rm = TRUE))
