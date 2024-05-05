@@ -1,0 +1,177 @@
+---
+output: 
+  pdf_document:
+    latex_engine: pdflatex
+    extra_dependencies: ["float"]
+title: "Effects of resource quality on cannibalism and disease transmission in the fall armyworm"
+author: "Kale Rougeau"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+geometry: margin=1in
+fontfamily: mathpazo
+fontsize: 12pt
+indent: true
+header-includes:
+    - \usepackage{indentfirst}
+    - \usepackage{graphicx}
+    - \usepackage{float}
+    - \floatplacement{figure}{H}
+    - \graphicspath{ {images/} }
+---
+
+# Methods
+
+## Question
+
+How does varying resource quality — specifically protein:carbohydrate ratios — affect cannibalism and virus transmission in the fall armyworm?
+
+## Data Source
+
+The host-pathogen system of interest is the fall armyworm (*Spodoptera frugiperda*, "FAW") and its species-specific baculovirus (*Sf*MNPV). FAW larvae were sourced from Benzon Research, Inc. All experiments were conducted inside a Conviron brand incubator with a 14-hour day and 10-hour night light cycle.
+
+FAW larvae were reared at an optimal daytime/nighttime temperature of 31°C/21°C on standard diet until the early third instar. At this age, larvae were transferred to their respective diet treatment with an assigned protein-to-carbohydrate (P:C) ratio. The four diet treatments and ratios are: Southland Products, Inc. brand colony diet (1:2.5), diet A (5:1), diet B (1:1), and diet C (1:5). Southland diet is a premade, ideal formula used for rearing and as a baseline group. A/B/C diet formulas are modified versions of recipes from Dr. Shikano used in experiments with a similar interest in resource quality in cabbage looper baculovirus systems [1, 2]. Larvae stayed on their assigned diet for one full instar then were starved at the time of molting into the fourth instar until the next day. Only newly molted, starved fourth instars were selected for use.
+
+Fourth-instar larvae were then placed into individual Petri dishes, secured by Parafilm, to serve as a cannibalism arena. These arenas contained a small cube of their assigned diet on wet filter paper and a single conspecific. Within each diet treatment, half of the individuals were offered uninfected conspecifics, and the other half were offered infected conspecifics for a total of 20 replicates per unique diet-infection treatment and 160 samples overall. For the conspecifics, newly molted third instars were starved and dosed with either 3 µL of 1 x 10^5^ *Sf*MNPV occlusion bodies per µL (infected) or 3 µL of DI water (uninfected) on a very small diet cube. Only individuals who consumed their whole dose and remained in the third instar were used as conspecifics in the arenas.
+
+The arenas were kept at 31°C/21°C and monitored for cannibalism over the course of 24 hours. Larvae were then collected back onto standard Southland diet and reared at the same temperature until death or pupation. Mortality was categorized as either virus-caused or not. Virus deaths were confirmed via observation of either whole body liquefaction or presence of *Sf*MNPV occlusion bodies under a microscope.
+
+Data collected include cannibalism status at each time interval (1H, 2H, 4H, 8H, 16H, 24H), larval mass prior to arena period, larval mass after arena period, end date of death or pupation, infection status, and pupal mass, sex, and moth status when applicable.
+
+## Data Analysis & Models
+
+All data analysis was performed in R versions 4.3.2 and 4.4.0 [3]. I focused on diet type and conspecific status as predictors of ultimate cannibalism status and diet type as a predictor of virus transmission. Data were simplified into binary response variables for both cannibalism (0 at 24H = not cannibalized, 1 at 24H = cannibalized) and virus transmission (0 at end date = not infected, 1 at end date = died of virus infection).
+
+### Cannibalism
+
+I used binomial generalized linear models ("GLMs") to analyze how diet type and conspecific infection status affected the ultimate cannibalism status. A binomial GLM was selected due to the response variable of interest, which is cannibalism status at the 24H mark, being a purely binary measurement of either 0 or 1. The equation with statistical notation for a binomial (logit link) GLM [4] with one predictor variable can be written as:
+
+*Equation 1:* $$log(\frac{p}{1-p}) = \beta_0 + \beta_1(x_{1i})$$
+
+Where $p$ is the probability of the response variable, $\beta_0$ is the intercept, $x_1$ is the predictor variable, and $\beta_1$ is the slope coefficient of the predictor $x_1$. Additional predictor variables can be added to *Equation 1* using $+ \beta_2(x_{2i}) + ... + \beta_k(x_{ki})$ for combination models or $\times\beta_2(x_{2i}) \times ... \times \beta_k(x_{ki})$ for interaction models. A null model with only the intercept ($\beta_0$) will be considered for model comparison purposes.
+
+I ran five separate binomial GLMs in R with the following predictor variables: conspecific status only, diet type only, conspecific status plus diet type (combination), conspecific status times diet type (interaction), and intercept only (null).
+I then used Akaike's Information Criterion (AIC) [5] for model selection, specifically utilizing AICc [6] to correct for potentially low sample size in proportion to the number of parameters in the models. The basic AICc equation, as derived from AIC, is as follows:
+
+*Equation 2:* $$AICc = 2k - 2ln(L) + \frac{2k(k+1)}{(n-k-1)}$$
+
+I used the `AICcmodavg` R package to calculate the AICc values, $\Delta$AICc values, AICc weights, cumulative weights, parameter totals, and log-likelihoods for each model.
+
+### Virus Transmission
+
+To analyze virus transmission results, I used a subset of the data that only included individuals who cannibalized infected conspecifics. Here, I also used a binomial GLM to analyze the effect of diet type on virus transmission. See *Equation 1* and previous explanation for the equation of a binomial GLM. Similar to the cannibalism analysis, a binomial GLM was selected due to the virus infection response variable being a binary measurement of 0 or 1.
+
+I ran two separate binomial GLMs in R: diet type as a predictor and intercept only (null).
+I then used AICc for model selection, as described above with *Equation 2* and the aforementioned R package.
+
+# Results
+
+### Cannibalism
+
+The total percentages of individuals that cannibalized by the 24-hour mark — within each diet type and conspecific status group — are shown in Figure 1 below.
+
+```{r Figure1, echo=FALSE, fig.align='center', fig.cap="Bar graph showing total uninfected (blue) and infected (red) conspecifics cannibalized within each diet treatment by the 24-hour mark.", message=FALSE, warning=FALSE, out.width='100%'}
+# read in csv file as data frame
+prelimdata <- as.data.frame(read.csv("~/Library/CloudStorage/Dropbox/ocs_dar/Lectures/DAR_Lecture_Assignment_06/Prelim_31s_Data.csv"))
+# remove notes and empty columns
+prelimdata <- prelimdata[,-25:-30]
+# remove 3 individuals who did not receive conspecifics
+prelimdata <- prelimdata[-158:-160,]
+
+### CANNIBALISM RATES ###
+
+attach(prelimdata)
+
+# exploratory visualization
+
+library(dplyr)
+library(ggplot2)
+
+## make new dataset with sum totals of cannibalism based on each diet type and con status
+
+can_totals <- prelimdata |>
+  group_by(Diet, ConStatus) |> # group by Diet type
+  summarise(Total_Cans = sum(X24H)) # summarize total cannibalized per diet type
+
+can_totals$Totals <- 20 # set sample size to 20 for each treatment
+can_totals$Totals[5] <- 17 # correct sample size C infecteds (3 excluded due to no conspecifics offered)
+
+can_totals$Percentages <- round((can_totals$Total_Cans / can_totals$Totals), 2)
+
+ggplot(can_totals, aes(fill = ConStatus, x = Diet, x2  = ConStatus, y = Percentages)) +
+  geom_bar(stat='identity', position='dodge') +
+  labs(x = "Diet Type", y = "Cannibalism Totals") +
+  geom_text(aes(label = paste((Percentages*100), "%", sep="")), fontface = "bold", vjust = -.5, position = position_dodge(1), size = 3) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  theme_bw()
+```
+
+The results of the AICc model selection for the five cannibalism binomial GLMs can be found in Table 1 below. The conspecific status only model (K = 2) had the lowest AICc score with a $\Delta$AICc of 0.00 and an AICc weight of 0.33.\
+
+Table 1: The five binomial generalized linear models for ultimate cannibalism status. K represents the number of model parameters; AICc is the calculated AICc value; $\Delta$AICc is the absolute difference between the lowest AICc score and a given model's score; AICc Weight is the proportion of total predictive power for each model; Cumulative Weight is the sum of the AICc Weights; LL is the log-likelihood for each model. "Con." is short for conspecific status.
+
+| Model  | K  | AICc    | $\Delta$AICc | AICc Wt. | Cum. Wt. | LL |
+|:-------|:--|:-----|:----|:-----|:-----|:-----|
+| **Con. only** | **2** | **148.10** | **0.00** | **0.33** | **0.33** | **-72.01** |
+| Con. $+$ Diet | 5  | 149.06 | 0.95 | 0.20 | 0.53 | -69.33 |
+| Intercept only | 1 | 149.25 | 1.15 | 0.19 | 0.72 | -73.61 |
+| Con. $\times$ Diet | 8 | 149.38 | 1.27 | 0.17 | 0.89 | -66.20 |
+| Diet only | 4 | 150.38 | 2.28 | 0.11 | 1.00 | -71.06 |
+
+### Virus Transmission
+
+The percentages of virus-induced mortality are shown in Figure 2 below.
+
+```{r Figure2, echo=FALSE, fig.align='center', fig.cap="Bar graph showing total rates of virus transmission. Percentages were calculated within each diet type using the number of confirmed infected individuals divided by the total number of individuals that cannibalized an infected conspecific by 24 hours.", message=FALSE, warning=FALSE, out.width='80%'}
+
+### VIRUS TRANSMISSION ###
+
+# subset only infecteds who cannibalized
+
+cannibalized <- subset(prelimdata, ConStatus == "infected" & X24H =="1", select = c("Diet", "ConStatus", "X24H", "Inf."))
+
+# create percentages of those infected
+cannibalized_virus <- cannibalized |>
+  group_by(Diet) |> # group by Diet type
+  summarise(Total_Inf. = sum(Inf.)) # summarize total infected per diet type
+
+# calculate total infected cons. that cannibalized whether infected or not
+
+# sum(cannibalized$X24H[cannibalized$Diet == "A"]) # 17
+# sum(cannibalized$X24H[cannibalized$Diet == "B"]) # 14
+# sum(cannibalized$X24H[cannibalized$Diet == "C"]) # 12
+# sum(cannibalized$X24H[cannibalized$Diet == "Southland"]) # 16
+
+cannibalized_virus$Totals <- c(17, 14, 12, 16)
+cannibalized_virus$Percentages <- round((cannibalized_virus$Total_Inf. / cannibalized_virus$Totals), 2)
+
+# bar plot of infection based on diet type
+
+ggplot(cannibalized_virus, aes(x = Diet, y = Percentages)) +
+  geom_bar(stat='identity', position='dodge', fill='salmon') +
+  labs(x = "Diet Type", y = "Infection Rate") +
+  geom_text(aes(label = paste((Percentages*100), "%", sep="")), fontface = "bold", vjust = -.5, position = position_dodge(1), size = 3) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  theme_bw()
+```
+
+The results of the AICc model selection for the two virus transmission binomial GLMs are shown in Table 2 below. The diet type model (K = 4) had the lowest AICc score with a $\Delta$AICc of 0.00 and an AICc weight of 0.93.\
+
+Table 2: The two binomial generalized linear models for virus transmission. Refer to the Table 1 caption for definitions of each reported AICc measurement.
+
+| Model  | K  | AICc    | $\Delta$AICc | AICc Wt. | Cum. Wt. | LL |
+|:-------|:--|:-----|:----|:-----|:-----|:-----|
+| **Diet** | **4** | **78.00** | **0.00** | **0.93** | **0.93** | **-34.63** |
+| Intercept only | 1 | 83.03 | 5.03 | 0.07 | 1.00 | -40.48 |
+
+# Literature Cited
+
+[1] Shikano, I. and J. S. Cory. 2014. Dietary mechanism behind the costs associated with resistance to Bacillus thuringiensis in the cabbage looper, Trichoplusia ni. PLoS One: 9(8):e105864.
+
+[2] Shikano, I. and J. S. Cory. 2015. Impact Of Environmental Variation On Host Performance Differs With Pathogen Identity: Implications For Host-Pathogen Interactions In A Changing Climate. Scientific Reports 5(1):15351.
+
+[3] R Core Team. 2024. R: A Language and Environment for Statistical Computing. Vienna, Austria: R Foundation for Statistical Computing. URL: https://www.R-project.org/.
+
+[4] Dussault, C. F., V. Fugère, T. Lamy, and Z. Taranu. 2023. Chapter 8: Binomial GLM *in* QCBS R Workshop Series. URL: https://r.qcbs.ca/workshop06/book-en/index.html
+
+[5] Akaike, H. 1973. Information theory and an extension of the maximum likelihood principle. 267-281 *in* B. N. Petrov and F. Csaki. 2nd International Symposium on Information Theory. Akadémiai Kiadó, Budapest, Hungary.
+
+[6] Sugiura, N. 1978. Further analysis of the data by Akaike's information criterion and the finite corrections. Communications in Statistics - Theory and Methods, 7:13–26.

@@ -1,0 +1,90 @@
+### METADATA DRAFT ###
+### Cannibalism Trials 31 Prelims ###
+
+OVERVIEW:
+
+I am interested in the potential effects of climate change on host-pathogen systems. In order to investigate this, I will be varying temperature and resource quality in the fall armyworm (*Spodoptera frugiperda*, "FAW") and examining the impacts on cannibalism and transmission of the species-specific baculovirus (*SfMNPV*).
+
+I will have three temperature treatments of cold, optimal, and hot, which have daytime/nighttime temperatures of 26°C/16°C, 31°C/21°C, and 34°C/26°C, respectively. For the purpose of this assignment, I will only be using the optimal temperature data and focusing solely on variation of resource quality.
+
+I am interested in the potential effects of climate change on a host-pathogen system: the fall armyworm and its species-specific baculovirus (*SfMNPV*). I recently ran an experiment as part of my overall thesis research. I fed fourth instar larvae various diets to vary resource quality and presented them with either infected or uninfected third instar larvae and monitored for cannibalism, currently at only an optimal temperature although I plan to rerun this experiment at two other temperatures. The goal is to evaluate cannibalism and disease transmission with these effects of resource quality and (ultimately) temperature.
+
+For the purpose of this Methods assignment, my question is: **How does varying resource quality affect cannibalism and virus transmission?** Eventually, I will incorporate the effect of temperature as well, but I may or may not have that additional data for the final class assignment.
+
+To further break down my research question, I am wondering how a higher carbon-to-nitrogen ratio (alternatively, a lower protein:carbohydrate ratio) may affect rates of cannibalism and consequential virus transmission from the consumption of infected conspecifics. If temperature will be included, then I would also like to evaluate how elevated temperatures may affect the same results: rates of cannibalism and disease transmission.
+
+I will be using my own data. Building on the explanation above, I will have 160 total individuals per temperature treatment. There is a possibility of three temperature levels (cold, optimal, hot), and I have already started with the optimal temperature. These are run separately since I will most likely use the same climate-controlled incubator programmed to different temperatures for each set. Within a temperature, half of the individuals (80) will be offered an infected conspecific, and the other half (80) will be offered an uninfected conspecific. Within each half, there will be 20 samples per diet type (standard diet Southland, increased protein A, equal protein:carbs B, decreased protein C) fed prior to and during the "arena period" in which the larvae will be offered those conspecifics. Afterwards, larvae will be collected back onto a standard diet and reared until pupation or death. Virus deaths will be identified via visual liquefaction from infection and/or presence of occlusion bodies under microscope as needed.
+
+Column descriptions & data types:
+- 'ID number' : (integer) *(1 through 160)*
+- 'Treatment': (string) diet type (either "Control", "A", "B", or "C")
+- 'Initial_Age': (string) starting age when placed on treatment diet (either "1st" or "3rd" instar)
+- 'Individual': (integer) an individual ID number assigned from 1-30 for each treatment set
+- 'First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth': (date) date that the given instar started; in MM/DD/YY format
+- 'Pup': (date) date of pupation event; in MM/DD/YY format
+- 'Moth': (date) date of moth eclosion event; in MM/DD/YY format
+- 'Sex': (character) M = male, F = female
+- 'Mass': (integer) mass of pupa in milligrams
+- 'Moth_Status': (string) NA if never attempted to emerge as a moth; M if emerged as healthy moth; DM if emerged as a "deformed moth" with non-functional wings; FTE if attempted to emerge but "failed to emerge" fully from pupal casing
+- 'Dead': (date) date of mortality event if applicable, NA if moth status of M or DM were successfully achieved; in MM/DD/YY format
+
+Important notes:
+*Missing elements are notated as "NA".
+
+- Temperature *(26/16, 31/21, 34/26)*
+
+- Conspecific status *(infected or uninfected)*
+
+- Diet type *(Southland, A, B, C)*
+
+- Time of cannibalism, if applicable, at the following time intervals: 0H, 1H, 2H, 4H, 8H, 16H, 24H *(1 for cannibalized at a given time, 0 if not cannibalized at that time interval; 24H will represent ultimate cannibalism result)*
+
+- Mass of larva before arena period *(in milligrams/mg)*
+
+- Mass of larva after arena period *(in milligrams/mg)*
+
+- Net weight change after arena period *(in milligrams/mg)*
+
+- Start date: when larvae are collected back onto diet *(MM-DD-YY format during data collection, will be converted to DD-MM-YYYY format for data analysis)*
+
+- End date: event of death or pupation *(MM-DD-YY format during data collection, will be converted to DD-MM-YYYY format for data analysis)*
+
+- "Gross" status: initial end status of larva *(+V for visual virus liquefaction, P for successful pupation, O for death from clear pupation failure, or A for need for microscope confirmation)*
+
+- "Eval" status: final determined end status of larva *(+V for confirmed virus, P for confirmed successful pupation, or O for confirmed other cause of death)*
+
+- Binary infection status *(1 for infected, 0 for not infected)*
+
+- Pupal mass *(in milligrams/mg)*
+
+- Pupal sex *(M for male, F for female)*
+
+- Moth status *(M for healthy moth, DM for non-functional/deformed wings, FTE for attempted to eclose but failed)*
+
+The variables of interest for analysis will be: conspecific status, diet type, ultimate cannibalism status, time of cannibalism event, net mass change after arena period, final infection status, and potentially pupal mass (ignoring temperature if analyzing for only one temperature subset).
+
+**3. Include the model or approach that you plan to use to answer your question. In most cases, you will use a model, but I am open-minded to what you can do to analyze your data. (So please come see me if you have an idea.) The primary requirement is that it needs to be a model (or clearly and directly related to a model) that we covered in class (20 points). I cannot grade models or approaches that we did not go over in class, even if they might be better for your data. Include justification as to why you picked your analysis (20 points), and include statistical notation of whatever model or approach you describe (20 points).**
+
+For most of my data, I plan to use generalized linear models (GLMs) with the family type and link function depending on the distribution of each data subset. Of course, after doing some exploratory analysis and trying out different models, I may find that other methods are more appropriate later, but this is what I suspect I'll be using.
+
+For the ultimate cannibalism status, I will be using a binomial GLM. The cannibalism status at time 24H is either 0 or 1, so a binary value for the response variable and a binomial distribution, which is why I plan to use this particular model type. This will be analyzed against diet type as the predictor. The statistical notation for a binomial GLM (with logit link function) can be written as:
+
+*Eqn. 1:* $X\beta = log(\frac{\mu}{1-\mu})$
+
+I can also consider conspecific status as another predictor variable, since virus infection of the victim may or may not influence the act of cannibalism, both by itself and in combination with diet type (multiple predictors; see *Eqn. 3* but with a binomial distribution).
+
+Similarly, final infection status is another binary measurement, so I will be using a binomial GLM for a subset of those individuals who were offered infected conspecifics. See statistical notation above.
+
+Since I'm measuring the mass of larvae before and after the arena period, I can determine the net change in weight. I am interested in seeing how cannibalism status and diet types may affect this net weight change (incorporating conspecific status and time to cannibalism could be interesting as well). I would expect to use a normally distributed GLM for these variables with net weight difference as the response variable; cannibalism status and diet type will be predictors and I plan to consider them separately and together. Since a normal GLM is functionally the same as a regular LM, the statistical notation for a simple linear regression model (one predictor) can be written as:
+
+*Eqn. 2:* $Y_i = \beta_0 + \beta_1X_1 + \epsilon_i$
+
+And for a linear regression with multiple predictors:
+
+*Eqn. 3:* $Y_i = \beta_0 + \beta_1X_i,_1 + \beta_2X_i,_2 + ... + \beta_kX_i,_k + \epsilon_i$
+
+I will also be interested in the time it takes to cannibalize. I will use diet type and/or conspecific status as the predictor(s) and the time interval in which they cannibalized as the response. Considering the uneven time intervals, this may end up having a log-normal distribution. I would expect to use a GLM with a normal/Gaussian distribution. See statistical notations above. I can also use an ANOVA to evaluate variance between diet groups for many of these analyses.
+
+Lastly, pupal mass data should have a normal distribution, and I could use a simple linear regression with pupal mass as the response and diet type as the predictor. See *Eqn. 2* for statistical notation. I can also incorporate conspecific status, cannibalism status, and even net (larval) weight change as further predictors in a linear model and compare the results. Infection status is not applicable since successful pupae are considered to be uninfected.
+
+In the cases of one or many predictors being considered, I can use a model selection method such as the Akaike information criterion (AIC) to better assess various model fits.

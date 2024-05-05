@@ -33,6 +33,7 @@ projectdata['Dead'] <- mdy(projectdata$Dead)
 # fix any mistakes in data
 projectdata[101,15] <- "2023-09-26" # error in month for this entry (B1st #11's Dead date)
 ### uncorrected error of "6/14/23" instead of "9/14/23" for A3rd #16's Sixth date
+projectdata[138,7] <- "2023-09-01" # error in year
 
 # calculate time spent in each instar; add as new columns
 # length in first instar "First_Length" then same until sixth instar
@@ -47,6 +48,16 @@ projectdata$Sixth_Length = as.integer(difftime(projectdata$Pup, projectdata$Sixt
 projectdata$Treatment_Age <- paste(projectdata$Treatment, projectdata$Initial_Age, sep = "")
 # modify "Control1st" value to be just "Control"
 projectdata$Treatment_Age[projectdata$Treatment_Age == "Control1st"] = "Control"
+
+# mean of third lengths for each diet type
+mean(projectdata$Third_Length[projectdata$Treatment_Age == "Control"], na.rm=TRUE)
+# Control -> 1.36 days, so just over a day from 3rd to 4th then starve
+mean(projectdata$Third_Length[projectdata$Treatment_Age == "A3rd"], na.rm=TRUE)
+# A -> 1.50 days, so probably give 2 days-ish then starve
+mean(projectdata$Third_Length[projectdata$Treatment_Age == "B3rd"], na.rm=TRUE)
+# B -> 1.54 days, so probably give 2 days here as well then starve
+mean(projectdata$Third_Length[projectdata$Treatment_Age == "C3rd"], na.rm=TRUE)
+# C -> 1.68 days, so give two FULL days before trying to starve as 4ths
 
 
 ### PUPATION AND ECLOSION SUCCESS RATES ###

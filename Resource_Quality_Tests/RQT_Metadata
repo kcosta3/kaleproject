@@ -1,0 +1,33 @@
+Metadata for: Resource Quality Tests data for "Effects of macronutrient manipulation in artificial diet on fall armyworm (Spodoptera frugiperda) performance" report
+Date: February 8th, 2024
+Original data: Resource_Quality_Tests.xlsx
+CSV file: Resource_Quality_Tests.csv
+Project GitHub: https://github.com/kcosta3/kaleproject
+
+Collection Dates: 9/1/2023 - 10/15/2023
+Collected/Inputted by: Kale Rougeau (previously Kale Costanza)
+PI: Dr. Bret Elderd
+Location: Life Sciences Building, Louisiana State University, Baton Rouge, LA, USA
+
+How data was collected:
+Fall armyworm larvae were checked daily from first instar until the last individual was determined to be dead or a moth. As each individual molted into a new instar, pupated, eclosed, or died, the date of the event was recorded under the appropriate column. New pupae had their sex determined via a dissecting scope and mass measured in milligrams on a precision scale. New moths were recorded as either M (healthy), DM (deformed wings), or FTE (attempted to emerge but failed). Pupae that never attempted to eclose were marked as dead once unresponsive. Original data were recorded manually on a printed spreadsheet (and written on plastic cups in which larvae were reared) then transferred to an Excel (.xlsx) file, which was then converted to a comma-separated (.csv) file.
+
+Column descriptions & data types:
+- 'Treatment': (string) diet type (either "Control", "A", "B", or "C")
+- 'Initial_Age': (string) starting age when placed on treatment diet (either "1st" or "3rd" instar)
+- 'Individual': (integer) an individual ID number assigned from 1-30 for each treatment set
+- 'First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth': (date) date that the given instar started; in MM/DD/YY format
+- 'Pup': (date) date of pupation event; in MM/DD/YY format
+- 'Moth': (date) date of moth eclosion event; in MM/DD/YY format
+- 'Sex': (character) M = male, F = female
+- 'Mass': (integer) mass of pupa in milligrams
+- 'Moth_Status': (string) NA if never attempted to emerge as a moth; M if emerged as healthy moth; DM if emerged as a "deformed moth" with non-functional wings; FTE if attempted to emerge but "failed to emerge" fully from pupal casing
+- 'Dead': (date) date of mortality event if applicable, NA if moth status of M or DM were successfully achieved; in MM/DD/YY format
+
+Important notes:
+*Missing elements are notated as "NA".
+*If a larva was crushed or otherwise killed by human error, this is noted outside of the main data columns, although this was not considered in any data analysis.
+*Data files are original/unedited and may contain minor errors that were corrected during later data analysis, including: unnecessary columns past the "Dead" column, MM/DD/YY date format rather than YYYY-MM-DD, error of "6/14/23" instead of "9/14/23" for A3rd #16's Sixth date (not used in analysis), error of "6/26/23" instead of "9/26/23" for B1st #11's Dead date (corrected for data analysis)
+
+Data source:
+This dataset was acquired through the "Resource Quality Tests" experiment conducted by Kale Rougeau in Dr. Bret Elderd's research lab at LSU. This was a preliminary set of tests done prior to the main project for Kale's thesis. The dataset is unpublished but has been analyzed and summarized in a report titled "Effects of macronutrient manipulation in artificial diet on fall armyworm (Spodoptera frugiperda) performance"; the data and report can be accessed on GitHub using the link above. Fall armyworm larvae were taken from one of the Elderd lab's colonies, which was part of an overall coevolution project. This particular colony line was originally collected from corn fields near Purdue University, Indiana, and was reared in the lab for many generations at a daytime/nighttime temperature of 26°C/16°C. The generations prior to this one were considered "coevolved" with their specialist SfMNPV virus, but this generation (F17) was not infected with virus. All larvae used in this experiment were reared at a standard temperature of 31°C daytime (14 hours) and 21°C nighttime (10 hours), as determined to be ideal by our lab's previous thermal performance curves (unpublished data). Larvae were fed one of four diets: Control (Southland brand pre-formulated diet mix), A (5:1 protein:carbohydrate ratio), B (1:1), or C (1:5). One set of larvae was placed on each manipulated diet (A, B, C) at first instar, and another set was started on Control diet then transferred to manipulated diet at the start of the third instar.
